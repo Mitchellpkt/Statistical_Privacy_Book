@@ -2,10 +2,10 @@
 # Identifying post-quantum strategies for Monero
 
 ## Motivation:
-Monero transactions created between 2014 and 2020 are susceptible to deanonymization by quantum computers. Methods for circumventing several of Monero's security and privacy features are already known, such as [Shor's algorithm](https://ieeexplore.ieee.org/document/365700/) (which [breaks security](https://scialert.net/fulltext/?doi=jas.2005.1692.1712) based on the discrete logarithm problem) and [Grover's algorithm](https://arxiv.org/abs/quant-ph/9605043) (which could be used to [forge blocks](https://www.mitre.org/sites/default/files/publications/17-4039-blockchain-and-quantum-computing.pdf)). In fact, there are several ways that a sophisticated quantum adversary might access others'; funds and sensitive information that would otherwise be cryptographically obfuscated:
+Monero transactions created between 2014 and 2020 are susceptible to deanonymization by quantum computers. Methods for circumventing several of Monero's security and privacy features are already known, such as [Shor's algorithm](https://ieeexplore.ieee.org/document/365700/) (which [breaks security](https://scialert.net/fulltext/?doi=jas.2005.1692.1712) based on the discrete logarithm problem) and [Grover's algorithm](https://arxiv.org/abs/quant-ph/9605043) (which could be used to [forge blocks](https://www.mitre.org/sites/default/files/publications/17-4039-blockchain-and-quantum-computing.pdf)). In fact, there are several ways that a sophisticated quantum adversary might access another's funds and sensitive information that would otherwise be cryptographically obfuscated:
 
 - **Deriving private keys from public keys**: A quantum adversary that has obtained your public wallet address can derive your private key. This enables them to learn your entire (past and subsequent) transaction history, and steal any current/future funds by forging a transaction from you to themselves.
-- **Deriving private keys from key images**: A quantum adversary can also break privacy some features for every transaction already recorded on the ledger, by using key images to derive transaction private keys.
+- **Deriving private keys from key images**: A quantum adversary can also break the privacy of some features for every transaction already recorded on the ledger, by using key images to derive transaction private keys.
 - **Deobfuscating the transaction graph**: Each ring signature references several (currently 11) past outputs, only one of which is truly being spent. Deobfuscation refers to analyzing the true flow of funds to eliminate the privacy provided by ring signatures and stealth addresses. Graph matching analyses are already parallelizable on traditional computers, and may be easier for quantum computers.
 - **Consensus mechanism & block immutability**: Monero's proof-of-work algorithm ([RandomX](https://github.com/tevador/RandomX)) involves chaining several (currently 8) operations by a VM, designed like a one way function (such that the input to produce a given output can only be found by brute force). We will evaluate whether this approach can be exploited by quantum computers leveraging methods such as Fourier fishing or Grover's algorithm. The potential ability to forge blocks with a specific hash would defeat blockchain immutability, however this can be mitigated with the addition (i.e. concatenation) of post-quantum hash functions and checksums.
 
@@ -13,7 +13,7 @@ The existence of such an adversary is a matter of 'when' not 'if'. Adam's previo
 
 Thankfully, cryptographers have developed several post-quantum security and privacy schemes that may be adaptable to Monero. Promising techniques include [zero-knowledge lattice cryptography](https://eprint.iacr.org/2019/747.pdf)  based on the [shortest vector problem](https://en.wikipedia.org/wiki/Lattice_problem#Shortest_vector_problem_(SVP)). Methods such as [hash-based ring signatures](https://eprint.iacr.org/2019/567.pdf), [GLYPH](https://eprint.iacr.org/2017/766.pdf) (Schnorr-like lattice-based signature scheme), and the cohort of [NIST post-quantum](https://csrc.nist.gov/news/2019/pqc-standardization-process-2nd-round-candidates) candidates were all designed to enable security in a post-quantum world. Applications to [anonymous post-quantum cryptocash](https://eprint.iacr.org/2017/716.pdf) have been considered, and the [Halo](https://eprint.iacr.org/2019/1021.pdf) recursive zero-knowledge proving system offers plausible post-quantum security. Each approach has its own benefits, drawbacks, and space/time complexity - our research recommendations will take into account these practical considerations in addition to theoretical compatibility.
 
-**This research will (1) study and simulate the threats listed above to assess vulnerability to quantum computers, (2) evaluate post-quantum cryptography scheme candidates to create a roadmap for hardening Monero against quantum adversaries, and (3) provide open-source proof-of-concept code where applicable.**
+**This research will (1) study and simulate the threats listed above to assess vulnerability to quantum computers, (2) evaluate post-quantum cryptography scheme candidates to create a roadmap for hardening Monero against quantum adversaries, and (3) provide open-source proof-of-concept code and demos where applicable.**
 
 The advent of powerful quantum computers will wreak havoc on almost every aspect of our digital infrastructure. Access to sound money (which requires privacy) is a fundamental human right and should be considered a high priority for hardening against quantum adversaries. To our knowledge, there are currently no plausibly post-quantum anonymous currencies in use today, meaning that only short-to-intermediate term financial privacy is available with current technology. The first coin to implement long-term post-quantum privacy features will be in a strong position for adoption, even long before quantum computers arrive.
 
@@ -33,8 +33,9 @@ Duration: 3 months (May - July 2020)
 - Researcher in Residence: Adam Corbo
   - Decentralized Consensus Fellow at Insight
   - Developed open-source proof-of-concept quantum PoW miner
-  - Expertise translating academic/mathematics research into code
-  - GitHub, LinkedIn, Twitter
+  - Expertise translating academic/mathematics research into code 
+  - 2 years of experience in quantum information theory and computation at UC Berkeley
+  - [GitHub](https://github.com/hamburgerguy/), [Twitter](https://twitter.com/adamryancorbo/), [LinkedIn](https://www.linkedin.com/in/adam-corbo/)
 - Principal Investigator: Mitchell Krawiec-Thayer
   - Head of Research, Developers in Residence at [Insight](http://www.insightconsensus.com/)
   - Data Science for Monero Research Lab
@@ -50,9 +51,9 @@ Duration: 3 months (May - July 2020)
 
 ### Phase 1: Identify and document existing vulnerabilities in Monero
 
-The first phase of this problem will focus on identifying which of Monero's security features are susceptible to quantum adversaries. We'll look for vulnerabilities to known tools such as Schor's algorithm (which can find discrete logarithms is polynomial time, breaking the DL problem), Grover's algorithm (which produces a quadratic speedup when searching for inputs that mapping to a particular output for any black box function), and fourier fishing in conjunction with the Deutsch-Josza algorithm (which can potentially be used in taking advantage of Monero's proof of work method in bounded-error quantum polynomial time).
+The first phase of this problem will focus on identifying which of Monero's security features are susceptible to quantum adversaries. We'll look for vulnerabilities to known tools such as Shor's algorithm (which can find discrete logarithms is polynomial time, breaking the DL problem), Grover's algorithm (which produces a quadratic speedup when searching for inputs that map to a particular output for any black box function), and fourier fishing in conjunction with the Deutsch-Josza algorithm (which can potentially be used in taking advantage of Monero's proof of work method in bounded-error quantum polynomial time).
 
-Some vulnerabilities are already known, for example that cryptography based on elliptic curve and the discrete logarithm problem can be defeated by Shor's algorithm. We will examine Monero's protocol for other examples of security based on problems that are computationally intractable for classical computers and easy for quantum computers. Some current privacy features are thought to be quantum resistant (such as Monero's masked amounts) and we will cautiously verify their security against our algorithmic adversarial toolkit.
+Some vulnerabilities are already known, for example that cryptography based on elliptic curve and the discrete logarithm problem can be made insecure using Shor's algorithm. We will examine Monero's protocol for other examples of security based on problems that are computationally intractable for classical computers and easy for quantum computers. Some current privacy features are thought to be quantum resistant (such as Monero's masked amounts) and we will cautiously verify their security against our algorithmic adversarial toolkit.
 
 **Phase 1 deliverables:** Audit of Monero's quantum resistance and summary of vulnerabilities.
 
@@ -74,7 +75,7 @@ Vulnerable privacy features will be given highest priority, since retroactive de
 
 There are three possible next steps, depending on the results from the above research. If we can pair known cryptography with a high-priority vulnerability, then we will code towards a proof-of-concept and/or benchmarking tools. If current methods for post-quantum cryptography are not compatible with Monero, we will pick one (or more) vulnerabilities for a deeper analysis - detailing the requirements for a solution and attempting to develop a novel approach. The third option is to produce a demo or proof-of-concept for exploiting one of the weaknesses, either using simulated or actual quantum computers.
 
-**Phase 3 deliverables:** The best use of time during this final stage depends strongly on results from the exploratory research. Likely deliverables are a proof of concept or prototype tooling for demonstrating a vulnerability or potential solution.
+**Phase 3 deliverables:** The best use of time during this final stage depends strongly on results from the exploratory research. Likely deliverables are a proof of concept or prototype tooling for demonstrating a vulnerability or potential solution. An audit of possible weaknesses to qauntum computers could as an extra side effect potentially expose an unseen existing weaknesses to classical computers; any such discovery would of course also be included.   
 
 # Appendix 1 - Literature
 
